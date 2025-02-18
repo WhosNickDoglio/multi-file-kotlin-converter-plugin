@@ -5,11 +5,11 @@ detekt = "1.23.7"
 
 [plugins]
 kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
-intellij = { id = "org.jetbrains.intellij", version = "1.17.4" }
+intellij = { id = "org.jetbrains.intellij.platform", version = "2.2.1" }
 detekt = { id = "io.gitlab.arturbosch.detekt", version.ref = "detekt" }
 
 
 [libraries]
-detekt-formatting = {module = "io.gitlab.arturbosch.detekt:detekt-formatting", version.ref = "detekt"}
+detekt-formatting = { module = "io.gitlab.arturbosch.detekt:detekt-formatting", version.ref = "detekt" }
 
 junit = { module = "junit:junit", version = "4.13.2" }
