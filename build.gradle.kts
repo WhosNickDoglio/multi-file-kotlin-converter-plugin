@@ -10,6 +10,10 @@ group = "com.pandora.plugin"
 
 version = "0.4.3"
 
+kotlin {
+  jvmToolchain(libs.versions.jdk.get().toInt())
+}
+
 intellijPlatform {
     pluginConfiguration {
         version = providers.provider<String> { project.version as String }
@@ -39,10 +43,10 @@ detekt {
 }
 
 tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile::class).configureEach {
-    compilerOptions.jvmTarget = JvmTarget.JVM_11
+    compilerOptions.jvmTarget = JvmTarget.fromTarget(libs.versions.jdkTaret.get())
 }
 
-tasks.detekt.configure { jvmTarget = "11" }
+tasks.detekt.configure { jvmTarget = libs.versions.jdkTaret.get() }
 
 repositories {
     mavenCentral()
