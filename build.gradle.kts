@@ -1,3 +1,5 @@
+import org.jetbrains.kotlin.gradle.dsl.JvmTarget
+
 plugins {
     alias(libs.plugins.kotlin.jvm)
     alias(libs.plugins.intellij)
@@ -22,7 +24,7 @@ java {
 
 detekt {
     autoCorrect = true
-    input = files("$projectDir")
+    source.setFrom(project.layout.projectDirectory.asFile)
 }
 
 repositories {
@@ -49,7 +51,7 @@ tasks.publishPlugin.configure {
 }
 
 tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile::class).configureEach {
-    kotlinOptions.jvmTarget = "11"
+    compilerOptions.jvmTarget = JvmTarget.JVM_11
 }
 
 tasks.detekt.configure { jvmTarget = "11" }
