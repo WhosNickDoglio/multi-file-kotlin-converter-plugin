@@ -26,6 +26,10 @@ detekt {
   input = files("$projectDir")
 }
 
+repositories {
+  mavenCentral()
+}
+
 tasks.patchPluginXml.configure {
   changeNotes.set(
       """
