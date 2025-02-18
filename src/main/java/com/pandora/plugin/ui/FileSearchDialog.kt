@@ -135,12 +135,13 @@ class FileSearchDialog(
 
         fun showSearchDialog(project: Project, searchDialog: SearchDialog): SearchOptions? {
             val dialog = FileSearchDialog(
-                    project = project,
-                    message = searchDialog.message,
-                    title = searchDialog.title,
-                    checkboxText = searchDialog.checkboxText,
-                    checked = searchDialog.checked,
-                    checkboxEnabled = searchDialog.checkboxEnabled)
+                project = project,
+                message = searchDialog.message,
+                title = searchDialog.title,
+                checkboxText = searchDialog.checkboxText,
+                checked = searchDialog.checked,
+                checkboxEnabled = searchDialog.checkboxEnabled
+            )
             dialog.show()
             lastRegexUsed = dialog.regexCheckBox.isSelected
             lastRegex = dialog.regexInput.text

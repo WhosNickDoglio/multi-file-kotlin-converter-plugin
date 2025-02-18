@@ -1,4 +1,5 @@
 @file:Suppress("MagicNumber")
+
 import systems.danger.kotlin.danger
 import systems.danger.kotlin.onGitHub
 import systems.danger.kotlin.warn

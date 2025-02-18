@@ -18,12 +18,16 @@ package com.pandora.plugin.options
 import java.awt.GridBagConstraints
 
 enum class PanelOption(val constraints: GridBagConstraints) {
-    WRAP(GridBagConstraints().apply {
-        this.anchor = GridBagConstraints.LINE_START
-    }),
-    FILL(GridBagConstraints().apply {
-        this.anchor = GridBagConstraints.LINE_START
-        this.weightx = 1.0
-        this.fill = GridBagConstraints.HORIZONTAL
-    })
+    WRAP(
+        GridBagConstraints().apply {
+            this.anchor = GridBagConstraints.LINE_START
+        }
+    ),
+    FILL(
+        GridBagConstraints().apply {
+            this.anchor = GridBagConstraints.LINE_START
+            this.weightx = 1.0
+            this.fill = GridBagConstraints.HORIZONTAL
+        }
+    )
 }

@@ -54,12 +54,12 @@ internal fun AnAction.writeCommitHistory(
     files: Array<VirtualFile>
 ): Boolean {
     val commitMessage = Messages.showInputDialog(
-            project,
-            "Commit Message for Conversion:",
-            "Enter a commit message",
-            null,
-            lastCommitMessage,
-            null
+        project,
+        "Commit Message for Conversion:",
+        "Enter a commit message",
+        null,
+        lastCommitMessage,
+        null
     )
     if (commitMessage.isNullOrBlank()) {
         throw ConversionException("Commit Message cannot be empty")
@@ -67,7 +67,7 @@ internal fun AnAction.writeCommitHistory(
     lastCommitMessage = commitMessage!!
 
     val finalVcs = VcsUtil.getVcsFor(project, projectBase)
-            ?: throw ConversionException("Unable to find Version Control for selected project")
+        ?: throw ConversionException("Unable to find Version Control for selected project")
     val changes = files.mapNotNull {
         logger.info("File $it has extension: ${it.extension}")
         if (it.extension != JAVA_EXTENSION) return@mapNotNull null
@@ -117,5 +117,5 @@ internal fun AnActionEvent.anyJavaFileSelected(): Boolean {
 private fun anyJavaFileSelected(project: Project, files: Array<out VirtualFile>): Boolean {
     val manager = PsiManager.getInstance(project)
     return files.any { manager.findFile(it) is PsiJavaFile && it.isWritable } ||
-            files.any { it.isDirectory && anyJavaFileSelected(project, it.children) }
+        files.any { it.isDirectory && anyJavaFileSelected(project, it.children) }
 }

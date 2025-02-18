@@ -68,10 +68,11 @@ class MultiFileFinderDialog(
             validator: InputValidator?
         ): Pair<String, Boolean> {
             val dialog = MultiFileFinderDialog(
-                    searchDialog = searchDialog,
-                    icon = icon,
-                    initialValue = initialValue,
-                    validator = validator)
+                searchDialog = searchDialog,
+                icon = icon,
+                initialValue = initialValue,
+                validator = validator
+            )
             dialog.show()
             return Pair(if (dialog.isOK) dialog.inputString ?: "" else "", dialog.isChecked == true)
         }

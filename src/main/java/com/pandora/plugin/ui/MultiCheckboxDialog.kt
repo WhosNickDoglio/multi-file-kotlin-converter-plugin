@@ -81,10 +81,11 @@ class MultiCheckboxDialog(
             itemFormatter: (Any) -> String = { "$it" }
         ): List<Any> {
             val dialog = MultiCheckboxDialog(
-                    items,
-                    project = project,
-                    title = title,
-                    itemFormatter = itemFormatter)
+                items,
+                project = project,
+                title = title,
+                itemFormatter = itemFormatter
+            )
             dialog.show()
 
             return if (dialog.isOK) dialog.selectedItems else emptyList()

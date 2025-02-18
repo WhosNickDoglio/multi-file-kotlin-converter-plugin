@@ -43,20 +43,19 @@ class ConvertListOfFilesToKotlinWithHistory : AnAction() {
     // region Plugin implementation
 
     override fun actionPerformed(e: AnActionEvent) {
-
         val project = e.project ?: return
         val projectBase = project.baseDir
 
         try {
             val dialogResult = MultiFileFinderDialog.showInputDialogWithCheckBox(
-                    SearchDialog(
-                            "Enter files to convert: (newline separated)",
-                            "Files to convert",
-                            "Automatically rename files in VCS"
-                    ),
-                    null,
-                    "",
-                    null
+                SearchDialog(
+                    "Enter files to convert: (newline separated)",
+                    "Files to convert",
+                    "Automatically rename files in VCS"
+                ),
+                null,
+                "",
+                null
             )
             val fileArray = fromFileList(projectBase, dialogResult.first) ?: emptyArray()
 
@@ -68,19 +67,21 @@ class ConvertListOfFilesToKotlinWithHistory : AnAction() {
             }
 
             val overrideEvent = AnActionEvent(
-                    e.inputEvent,
-                    e.dataContext(fileArray),
-                    e.place,
-                    e.presentation,
-                    e.actionManager,
-                    e.modifiers
+                e.inputEvent,
+                e.dataContext(fileArray),
+                e.place,
+                e.presentation,
+                e.actionManager,
+                e.modifiers
             )
             ActionManager.getInstance().getAction(CONVERT_JAVA_TO_KOTLIN_PLUGIN_ID)?.actionPerformed(overrideEvent)
         } catch (e: ConversionException) {
             if (e.isError) {
-                logger.error("Problem running conversion plugin: ${e.message}\n" +
+                logger.error(
+                    "Problem running conversion plugin: ${e.message}\n" +
                         "${e.stackTrace.joinToString("\n")}\n" +
-                        "----------")
+                        "----------"
+                )
             } else {
                 logger.info(e.message, e.cause)
             }

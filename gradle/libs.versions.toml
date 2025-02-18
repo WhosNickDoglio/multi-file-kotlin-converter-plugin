@@ -1,6 +1,6 @@
 [versions]
 kotlin = "1.8.10"
-detekt = "1.17.0"
+detekt = "1.23.7"
 
 
 [plugins]

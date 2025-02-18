@@ -50,15 +50,14 @@ class SearchAndConvertFilesToKotlinWithHistory : AnAction() {
 
     @Suppress("ReturnCount")
     override fun actionPerformed(e: AnActionEvent) {
-
         val project = e.project ?: return
         val projectBase = project.baseDir
 
         try {
             val dialogResult = FileSearchDialog.showSearchDialog(project, SearchDialog()) ?: return
             val fileArray = verifyFiles(
-                    project,
-                    lineCountVerify(project, projectBase, dialogResult, regexVerify(projectBase, dialogResult.regex))
+                project,
+                lineCountVerify(project, projectBase, dialogResult, regexVerify(projectBase, dialogResult.regex))
             )
 
             fileArray.forEach { logger.info("Preparing to convert file: $it") }
@@ -68,19 +67,21 @@ class SearchAndConvertFilesToKotlinWithHistory : AnAction() {
             }
 
             val overrideEvent = AnActionEvent(
-                    e.inputEvent,
-                    e.dataContext(fileArray),
-                    e.place,
-                    e.presentation,
-                    e.actionManager,
-                    e.modifiers
+                e.inputEvent,
+                e.dataContext(fileArray),
+                e.place,
+                e.presentation,
+                e.actionManager,
+                e.modifiers
             )
             ActionManager.getInstance().getAction(CONVERT_JAVA_TO_KOTLIN_PLUGIN_ID)?.actionPerformed(overrideEvent)
         } catch (e: ConversionException) {
             if (e.isError) {
-                logger.error("Problem running conversion plugin: ${e.message}\n" +
+                logger.error(
+                    "Problem running conversion plugin: ${e.message}\n" +
                         "${e.stackTrace.joinToString("\n")}\n" +
-                        "----------")
+                        "----------"
+                )
             } else {
                 logger.info(e.message, e.cause)
             }
@@ -118,11 +119,12 @@ class SearchAndConvertFilesToKotlinWithHistory : AnAction() {
                 }
             }
             return ProgressManager.getInstance()
-                    .runProcessWithProgressSynchronously<Array<VirtualFile>?, Exception>(
-                            lambda,
-                            "Scanning Files...",
-                            false,
-                            project)
+                .runProcessWithProgressSynchronously<Array<VirtualFile>?, Exception>(
+                    lambda,
+                    "Scanning Files...",
+                    false,
+                    project
+                )
         }
         val trimLambda = trim@{
             return@trim inputList.filter {
@@ -132,11 +134,12 @@ class SearchAndConvertFilesToKotlinWithHistory : AnAction() {
             }.toTypedArray()
         }
         return ProgressManager.getInstance()
-                .runProcessWithProgressSynchronously<Array<VirtualFile>?, Exception>(
-                        trimLambda,
-                        "Scanning Files...",
-                        false,
-                        project)
+            .runProcessWithProgressSynchronously<Array<VirtualFile>?, Exception>(
+                trimLambda,
+                "Scanning Files...",
+                false,
+                project
+            )
     }
 
     private fun verifyFiles(
@@ -146,8 +149,8 @@ class SearchAndConvertFilesToKotlinWithHistory : AnAction() {
     ): Array<VirtualFile> {
         if (files == null || files.isEmpty()) return emptyArray()
         return showMultiCheckboxDialog(files, project, "Verify Files", formatter)
-                .mapNotNull { it as? VirtualFile }
-                .toTypedArray()
+            .mapNotNull { it as? VirtualFile }
+            .toTypedArray()
     }
 
     // endregion

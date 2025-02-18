@@ -23,14 +23,17 @@ fun AnActionEvent.dataContext(fileArray: Array<VirtualFile>): DataContext = Data
  */
 fun VirtualFile.findMatchingChildren(matcher: (VirtualFile) -> Boolean): Array<VirtualFile> {
     val result = mutableListOf<VirtualFile>()
-    VfsUtilCore.visitChildrenRecursively(this, object : VirtualFileVisitor<Unit>() {
-        override fun visitFile(file: VirtualFile): Boolean {
-            if (file.canConvert && matcher(file)) {
-                result.add(file)
+    VfsUtilCore.visitChildrenRecursively(
+        this,
+        object : VirtualFileVisitor<Unit>() {
+            override fun visitFile(file: VirtualFile): Boolean {
+                if (file.canConvert && matcher(file)) {
+                    result.add(file)
+                }
+                return true
             }
-            return true
         }
-    })
+    )
     return result.toTypedArray()
 }
 
