@@ -1,1 +1,1 @@
-rootProject.name = 'multiple-file-kotlin-converter'
+rootProject.name = "multiple-file-kotlin-converter"
