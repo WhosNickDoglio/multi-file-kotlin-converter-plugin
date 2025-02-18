@@ -52,7 +52,7 @@ tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile::class).configure
   kotlinOptions.jvmTarget = "11"
 }
 
-tasks.detekt.configure { jvmTarget = "1.8" }
+tasks.detekt.configure { jvmTarget = "11" }
 
 dependencies {
   detektPlugins(libs.detekt.formatting)
