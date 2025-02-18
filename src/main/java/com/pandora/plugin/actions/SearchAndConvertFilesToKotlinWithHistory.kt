@@ -147,7 +147,7 @@ class SearchAndConvertFilesToKotlinWithHistory : AnAction() {
         files: Array<VirtualFile>?,
         formatter: (Any) -> String = { (it as VirtualFile).presentableName }
     ): Array<VirtualFile> {
-        if (files == null || files.isEmpty()) return emptyArray()
+        if (files.isNullOrEmpty()) return emptyArray()
         return showMultiCheckboxDialog(files, project, "Verify Files", formatter)
             .mapNotNull { it as? VirtualFile }
             .toTypedArray()

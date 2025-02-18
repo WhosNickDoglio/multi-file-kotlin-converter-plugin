@@ -74,7 +74,7 @@ class MultiFileFinderDialog(
                 validator = validator
             )
             dialog.show()
-            return Pair(if (dialog.isOK) dialog.inputString ?: "" else "", dialog.isChecked == true)
+            return Pair(if (dialog.isOK) dialog.inputString.orEmpty() else "", dialog.isChecked == true)
         }
     }
 }

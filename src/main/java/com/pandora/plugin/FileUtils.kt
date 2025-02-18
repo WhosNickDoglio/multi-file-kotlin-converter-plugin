@@ -64,7 +64,7 @@ internal fun AnAction.writeCommitHistory(
     if (commitMessage.isNullOrBlank()) {
         throw ConversionException("Commit Message cannot be empty")
     }
-    lastCommitMessage = commitMessage!!
+    lastCommitMessage = commitMessage
 
     val finalVcs = VcsUtil.getVcsFor(project, projectBase)
         ?: throw ConversionException("Unable to find Version Control for selected project")

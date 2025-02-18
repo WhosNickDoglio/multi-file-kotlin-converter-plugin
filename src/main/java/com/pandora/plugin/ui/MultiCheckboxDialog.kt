@@ -35,7 +35,7 @@ class MultiCheckboxDialog(
     @Nls(capitalization = Nls.Capitalization.Title) title: String,
     private val itemFormatter: (Any) -> String
 ) : DialogWrapper(project) {
-    private var checkBoxes = HashMap<Any, JCheckBox>()
+    private val checkBoxes = HashMap<Any, JCheckBox>()
 
     private val allItems = items
 

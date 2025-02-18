@@ -1,3 +1,4 @@
+import io.gitlab.arturbosch.detekt.Detekt
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 
 plugins {
@@ -46,7 +47,9 @@ tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile::class).configure
     compilerOptions.jvmTarget = JvmTarget.fromTarget(libs.versions.jdkTaret.get())
 }
 
-tasks.detekt.configure { jvmTarget = libs.versions.jdkTaret.get() }
+tasks.withType(Detekt::class.java).configureEach {
+  jvmTarget = libs.versions.jdkTaret.get()
+}
 
 repositories {
     mavenCentral()

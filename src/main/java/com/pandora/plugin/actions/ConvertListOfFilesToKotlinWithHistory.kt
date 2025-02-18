@@ -42,6 +42,7 @@ import com.pandora.plugin.writeCommitHistory
 class ConvertListOfFilesToKotlinWithHistory : AnAction() {
     // region Plugin implementation
 
+    @Suppress("UseOrEmpty")
     override fun actionPerformed(e: AnActionEvent) {
         val project = e.project ?: return
         val projectBase = project.baseDir
@@ -57,6 +58,7 @@ class ConvertListOfFilesToKotlinWithHistory : AnAction() {
                 "",
                 null
             )
+
             val fileArray = fromFileList(projectBase, dialogResult.first) ?: emptyArray()
 
             fileArray.forEach { logger.info("Preparing to convert file: $it") }

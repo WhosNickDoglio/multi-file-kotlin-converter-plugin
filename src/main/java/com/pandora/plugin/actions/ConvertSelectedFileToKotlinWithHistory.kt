@@ -31,6 +31,7 @@ class ConvertSelectedFileToKotlinWithHistory : AnAction() {
         val projectBase = project.baseDir
 
         try {
+            @Suppress("UseOrEmpty")
             val fileArray = e.getData(CommonDataKeys.VIRTUAL_FILE_ARRAY) ?: emptyArray()
             fileArray.forEach { logger.info("Preparing to convert file: $it") }
 
