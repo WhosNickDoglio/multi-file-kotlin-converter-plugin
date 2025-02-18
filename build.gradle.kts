@@ -21,8 +21,6 @@ java {
 }
 
 detekt {
-    parallel = true
-    buildUponDefaultConfig = true
     autoCorrect = true
     input = files("$projectDir")
 }
