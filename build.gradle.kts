@@ -11,7 +11,7 @@ group = "com.pandora.plugin"
 version = "0.4.3"
 
 intellij {
-    version.set("2020.3")
+    version.set("2021.3")
     updateSinceUntilBuild.set(false)
     plugins.set(listOf("java"))
     instrumentCode.set(false)
