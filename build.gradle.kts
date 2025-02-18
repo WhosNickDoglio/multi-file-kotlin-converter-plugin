@@ -1,9 +1,9 @@
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 
 plugins {
-  alias(libs.plugins.kotlin.jvm)
-  alias(libs.plugins.intellij)
-  alias(libs.plugins.detekt)
+    alias(libs.plugins.kotlin.jvm)
+    alias(libs.plugins.intellij)
+    alias(libs.plugins.detekt)
 }
 
 group = "com.pandora.plugin"
@@ -11,10 +11,10 @@ group = "com.pandora.plugin"
 version = "0.4.3"
 
 intellijPlatform {
-  pluginConfiguration {
-    version = providers.provider<String> { project.version as String }
-    changeNotes =
-        """
+    pluginConfiguration {
+        version = providers.provider<String> { project.version as String }
+        changeNotes =
+            """
             <ul>
               <li>0.1: Initial version of the Multiple File Kotlin Converter plugin for IntelliJ IDEA.</li>
               <li>0.2: Fixing small issues found in testing with cancellation and layout.</li>
@@ -22,42 +22,42 @@ intellijPlatform {
               <li>0.4: Fix Deprecated project root usage.</li>
             </ul>
         """
-            .trimIndent()
-  }
-  publishing { token = providers.gradleProperty("jetbrains.publish.token") }
-  instrumentCode.set(false)
+                .trimIndent()
+    }
+    publishing { token = providers.gradleProperty("jetbrains.publish.token") }
+    instrumentCode.set(false)
 }
 
 java {
-  sourceCompatibility = JavaVersion.VERSION_11
-  targetCompatibility = JavaVersion.VERSION_11
+    sourceCompatibility = JavaVersion.VERSION_11
+    targetCompatibility = JavaVersion.VERSION_11
 }
 
 detekt {
-  autoCorrect = true
-  source.setFrom(project.layout.projectDirectory.asFile)
+    autoCorrect = true
+    source.setFrom(project.layout.projectDirectory.asFile)
 }
 
 tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile::class).configureEach {
-  compilerOptions.jvmTarget = JvmTarget.JVM_11
+    compilerOptions.jvmTarget = JvmTarget.JVM_11
 }
 
 tasks.detekt.configure { jvmTarget = "11" }
 
 repositories {
-  mavenCentral()
-  intellijPlatform { defaultRepositories() }
+    mavenCentral()
+    intellijPlatform { defaultRepositories() }
 }
 
 dependencies {
-  intellijPlatform {
-    intellijIdeaCommunity(version = "2024.3.3")
-    bundledPlugin("com.intellij.java")
+    intellijPlatform {
+        intellijIdeaCommunity(version = "2024.3.3")
+        bundledPlugin("com.intellij.java")
 
-    pluginVerifier()
-    zipSigner()
-  }
+        pluginVerifier()
+        zipSigner()
+    }
 
-  detektPlugins(libs.detekt.formatting)
-  testImplementation(libs.junit)
+    detektPlugins(libs.detekt.formatting)
+    testImplementation(libs.junit)
 }
