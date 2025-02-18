@@ -1,7 +1,7 @@
 plugins {
-  id("org.jetbrains.kotlin.jvm") version "1.8.10"
-  id("org.jetbrains.intellij") version "1.17.4"
-  id("io.gitlab.arturbosch.detekt") version "1.9.1"
+  alias(libs.plugins.kotlin.jvm)
+  alias(libs.plugins.intellij)
+  alias(libs.plugins.detekt)
 }
 
 group = "com.pandora.plugin"
@@ -55,6 +55,6 @@ tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile::class).configure
 tasks.detekt.configure { jvmTarget = "1.8" }
 
 dependencies {
-  detektPlugins("io.gitlab.arturbosch.detekt:detekt-formatting:1.9.1")
-  testImplementation("junit:junit:4.13.2")
+  detektPlugins(libs.detekt.formatting)
+  testImplementation(libs.junit)
 }

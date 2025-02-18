@@ -1,0 +1,15 @@
+[versions]
+kotlin = "1.8.10"
+detekt = "1.9.1"
+
+
+[plugins]
+kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
+intellij = { id = "org.jetbrains.intellij", version = "1.17.4" }
+detekt = { id = "io.gitlab.arturbosch.detekt", version.ref = "detekt" }
+
+
+[libraries]
+detekt-formatting = {module = "io.gitlab.arturbosch.detekt:detekt-formatting", version.ref = "detekt"}
+
+junit = { module = "junit:junit", version = "4.13.2" }
