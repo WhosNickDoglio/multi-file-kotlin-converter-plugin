@@ -1,6 +1,6 @@
 [versions]
 kotlin = "2.1.10"
-detekt = "1.23.7"
+detekt = "1.23.8"
 jdk = "23"
 jdkTaret = "11"
 
