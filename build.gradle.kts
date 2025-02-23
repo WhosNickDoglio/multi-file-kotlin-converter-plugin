@@ -12,7 +12,7 @@ group = "com.pandora.plugin"
 version = "0.4.3"
 
 kotlin {
-  jvmToolchain(libs.versions.jdk.get().toInt())
+    jvmToolchain(libs.versions.jdk.get().toInt())
 }
 
 intellijPlatform {
@@ -48,7 +48,7 @@ tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile::class).configure
 }
 
 tasks.withType(Detekt::class.java).configureEach {
-  jvmTarget = libs.versions.jdkTaret.get()
+    jvmTarget = libs.versions.jdkTaret.get()
 }
 
 repositories {
