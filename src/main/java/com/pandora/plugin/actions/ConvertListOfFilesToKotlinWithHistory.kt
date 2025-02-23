@@ -16,6 +16,7 @@
 package com.pandora.plugin.actions
 
 import com.intellij.openapi.actionSystem.ActionManager
+import com.intellij.openapi.actionSystem.ActionUpdateThread
 import com.intellij.openapi.actionSystem.AnAction
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.vfs.VirtualFile
@@ -41,6 +42,8 @@ import com.pandora.plugin.writeCommitHistory
  */
 class ConvertListOfFilesToKotlinWithHistory : AnAction() {
     // region Plugin implementation
+
+    override fun getActionUpdateThread(): ActionUpdateThread = ActionUpdateThread.BGT
 
     @Suppress("UseOrEmpty")
     override fun actionPerformed(e: AnActionEvent) {
