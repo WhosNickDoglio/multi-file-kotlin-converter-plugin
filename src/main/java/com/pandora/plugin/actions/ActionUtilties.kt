@@ -36,21 +36,19 @@ fun AnActionEvent.dataContext(fileArray: Array<VirtualFile>): DataContext = Data
 /**
  * Searches the directory tree of a given [VirtualFile] for .java files that that can be converted
  */
-fun VirtualFile.findMatchingChildren(matcher: (VirtualFile) -> Boolean): Array<VirtualFile> {
-    val result = mutableListOf<VirtualFile>()
+fun VirtualFile.findMatchingChildren(matcher: (VirtualFile) -> Boolean): Array<VirtualFile> = buildList {
     VfsUtilCore.visitChildrenRecursively(
-        this,
+        this@findMatchingChildren,
         object : VirtualFileVisitor<Unit>() {
             override fun visitFile(file: VirtualFile): Boolean {
                 if (file.canConvert && matcher(file)) {
-                    result.add(file)
+                    add(file)
                 }
                 return true
             }
         }
     )
-    return result.toTypedArray()
-}
+}.toTypedArray()
 
 private val VirtualFile.canConvert: Boolean
     get() = extension == JAVA_EXTENSION && isWritable && !isDirectory && !path.contains("/build/")

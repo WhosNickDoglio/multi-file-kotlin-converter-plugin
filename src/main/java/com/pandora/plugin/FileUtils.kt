@@ -15,20 +15,19 @@
  */
 package com.pandora.plugin
 
-import com.intellij.openapi.actionSystem.AnAction
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.actionSystem.CommonDataKeys
+import com.intellij.openapi.application.runReadAction
 import com.intellij.openapi.command.WriteCommandAction
+import com.intellij.openapi.components.service
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.ui.Messages
 import com.intellij.openapi.vcs.actions.VcsContextFactory
-import com.intellij.openapi.vcs.changes.Change
 import com.intellij.openapi.vcs.changes.CurrentContentRevision
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.PsiJavaFile
 import com.intellij.psi.PsiManager
-import com.intellij.vcsUtil.VcsUtil
 import java.io.IOException
 
 val logger = Logger.getInstance("Kotlin Converter")
@@ -48,10 +47,11 @@ private var lastCommitMessage = SUGGESTED_COMMIT_MESSAGE
 
 internal const val DIALOG_SIZE = 500
 
-internal fun AnAction.writeCommitHistory(
+internal fun writeCommitHistory(
     project: Project,
     projectBase: VirtualFile,
-    files: Array<VirtualFile>
+    files: Array<VirtualFile>,
+    onFinish: (Boolean) -> Unit
 ): Boolean {
     val commitMessage = Messages.showInputDialog(
         project,
@@ -66,36 +66,29 @@ internal fun AnAction.writeCommitHistory(
     }
     lastCommitMessage = commitMessage
 
-    val finalVcs = VcsUtil.getVcsFor(project, projectBase)
-        ?: throw ConversionException("Unable to find Version Control for selected project")
-    val changes = files.mapNotNull {
-        logger.info("File $it has extension: ${it.extension}")
-        if (it.extension != JAVA_EXTENSION) return@mapNotNull null
-        val before = it.contentRevision()
-        logger.info("Found file ${before.file}")
-        renameFile(project, it, "${it.nameWithoutExtension}.$KOTLIN_EXTENSION")
-        val after = it.contentRevision()
-        logger.info("Renamed file ${before.file} -> ${after.file}")
-        Change(before, after)
-    }.toList()
-    return if (changes.isNotEmpty()) {
-        finalVcs.checkinEnvironment?.commit(changes, commitMessage)
-        files.filter { it.extension == KOTLIN_EXTENSION }.forEach {
-            renameFile(project, it, "${it.nameWithoutExtension}.$JAVA_EXTENSION")
+    val writeCommitHistoryService = project.service<WriteCommitService>()
+
+    writeCommitHistoryService.commitChanges(
+        message = lastCommitMessage,
+        projectBase = projectBase,
+        files = files,
+        onCommit = { successful ->
+            if (!successful) {
+                Messages.showDialog("No files found to commit.", "Nothing to commit", emptyArray(), 0, null)
+            }
+            onFinish(successful)
         }
-        true
-    } else {
-        Messages.showDialog("No files found to commit.", "Nothing to commit", emptyArray(), 0, null)
-        false
-    }
+    )
+
+    return false
 }
 
-internal fun AnAction.renameFile(project: Project, virtualFile: VirtualFile, newName: String) {
+internal fun renameFile(project: Project, virtualFile: VirtualFile, newName: String) {
     logger.info("Renaming file `${virtualFile.name}` to `$newName`")
 
     WriteCommandAction.runWriteCommandAction(project) {
         try {
-            virtualFile.rename(this, newName)
+            virtualFile.rename(project, newName)
         } catch (e: IOException) {
             throw ConversionException("Error while renaming file `${virtualFile.name}` to `$newName`", true, e)
         }
@@ -108,10 +101,10 @@ internal fun VirtualFile.contentRevision(): CurrentContentRevision {
     return CurrentContentRevision(path)
 }
 
-internal fun AnActionEvent.anyJavaFileSelected(): Boolean {
+internal fun AnActionEvent.anyJavaFileSelected(): Boolean = runReadAction {
     val projectRef = project
     val files = getData(CommonDataKeys.VIRTUAL_FILE_ARRAY)
-    return projectRef != null && files != null && anyJavaFileSelected(projectRef, files)
+    return@runReadAction projectRef != null && files != null && anyJavaFileSelected(projectRef, files)
 }
 
 private fun anyJavaFileSelected(project: Project, files: Array<out VirtualFile>): Boolean {

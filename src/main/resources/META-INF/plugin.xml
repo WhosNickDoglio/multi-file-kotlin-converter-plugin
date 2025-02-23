@@ -31,6 +31,10 @@
 
     <extensions defaultExtensionNs="com.intellij">
         <!-- Add your extensions here -->
+        <projectService
+            serviceInterface="com.pandora.plugin.WriteCommitService"
+            serviceImplementation="com.pandora.plugin.WriteCommitServiceImpl"
+        />
     </extensions>
 
     <!--

@@ -16,9 +16,13 @@
 package com.pandora.plugin.actions
 
 import com.intellij.openapi.actionSystem.ActionManager
+import com.intellij.openapi.actionSystem.ActionUiKind
 import com.intellij.openapi.actionSystem.ActionUpdateThread
 import com.intellij.openapi.actionSystem.AnAction
 import com.intellij.openapi.actionSystem.AnActionEvent
+import com.intellij.openapi.actionSystem.PlatformDataKeys
+import com.intellij.openapi.actionSystem.impl.SimpleDataContext
+import com.intellij.openapi.module.ModuleManager
 import com.intellij.openapi.vfs.VirtualFile
 import com.pandora.plugin.CONVERT_JAVA_TO_KOTLIN_PLUGIN_ID
 import com.pandora.plugin.ConversionException
@@ -65,21 +69,42 @@ class ConvertListOfFilesToKotlinWithHistory : AnAction() {
             val fileArray = fromFileList(projectBase, dialogResult.first) ?: emptyArray()
 
             fileArray.forEach { logger.info("Preparing to convert file: $it") }
+            val modules = ModuleManager.getInstance(project).modules.first()
 
-            // dialogResult.second is the commit checkbox
-            if (fileArray.isEmpty() || (dialogResult.second && !writeCommitHistory(project, projectBase, fileArray))) {
-                return
-            }
+            fileArray.first()
+            writeCommitHistory(
+                project = project,
+                projectBase = projectBase,
+                files = fileArray,
+                onFinish = { successful ->
+                    if (fileArray.isEmpty() || (dialogResult.second && !successful)) {
+                        return@writeCommitHistory
+                    }
 
-            val overrideEvent = AnActionEvent(
-                e.inputEvent,
-                e.dataContext(fileArray),
-                e.place,
-                e.presentation,
-                e.actionManager,
-                e.modifiers
+                    val dataContext = SimpleDataContext.builder()
+                        .setParent(e.dataContext)
+                        .add(PlatformDataKeys.VIRTUAL_FILE_ARRAY, fileArray)
+                        .add(PlatformDataKeys.MODULE, modules)
+                        .build()
+
+                    val overrideEvent = AnActionEvent(
+                        dataContext,
+                        e.presentation,
+                        e.place,
+                        ActionUiKind.NONE,
+                        e.inputEvent,
+                        e.modifiers,
+                        e.actionManager,
+                    )
+
+                    val javaConverterAction = ActionManager.getInstance().getAction(CONVERT_JAVA_TO_KOTLIN_PLUGIN_ID)
+
+                    if (javaConverterAction == null) {
+                        logger.info("NULL OOPS")
+                    }
+                    javaConverterAction?.actionPerformed(overrideEvent)
+                }
             )
-            ActionManager.getInstance().getAction(CONVERT_JAVA_TO_KOTLIN_PLUGIN_ID)?.actionPerformed(overrideEvent)
         } catch (e: ConversionException) {
             if (e.isError) {
                 logger.error(

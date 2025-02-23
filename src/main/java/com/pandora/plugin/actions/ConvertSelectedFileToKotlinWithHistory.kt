@@ -39,19 +39,27 @@ class ConvertSelectedFileToKotlinWithHistory : AnAction() {
             val fileArray = e.getData(CommonDataKeys.VIRTUAL_FILE_ARRAY) ?: emptyArray()
             fileArray.forEach { logger.info("Preparing to convert file: $it") }
 
-            if (fileArray.isEmpty() || !writeCommitHistory(project, projectBase, fileArray)) {
-                return
-            }
+            writeCommitHistory(
+                project = project,
+                projectBase = projectBase,
+                files = fileArray,
+                onFinish = { successful ->
+                    if (fileArray.isEmpty() || !successful) {
+                        return@writeCommitHistory
+                    }
 
-            val overrideEvent = AnActionEvent(
-                e.inputEvent,
-                e.dataContext(fileArray),
-                e.place,
-                e.presentation,
-                e.actionManager,
-                e.modifiers
+                    val overrideEvent = AnActionEvent(
+                        e.inputEvent,
+                        e.dataContext(fileArray),
+                        e.place,
+                        e.presentation,
+                        e.actionManager,
+                        e.modifiers
+                    )
+                    ActionManager.getInstance().getAction(CONVERT_JAVA_TO_KOTLIN_PLUGIN_ID)
+                        ?.actionPerformed(overrideEvent)
+                }
             )
-            ActionManager.getInstance().getAction(CONVERT_JAVA_TO_KOTLIN_PLUGIN_ID)?.actionPerformed(overrideEvent)
         } catch (e: ConversionException) {
             if (e.isError) {
                 logger.error(
