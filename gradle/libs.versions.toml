@@ -1,15 +1,31 @@
 [versions]
+agp = "8.8.0"
+dependencyAnalysis = "2.8.0"
+ktfmt = "0.54"
+kover = "0.9.1"
+spotless = "7.0.2"
+jdkTarget = "17"
+sort = "0.14"
 kotlin = "2.1.10"
 detekt = "1.23.8"
 jdk = "23"
 jdkTaret = "11"
 
 [plugins]
+convention-kotlin = { id = "dev.whosnickdoglio.convention.kotlin", version = "0.1" }
+lint = { id = "com.android.lint", version.ref = "agp" }
+doctor = { id = "com.osacky.doctor", version = "0.10.0" }
+spotless = { id = "com.diffplug.spotless", version.ref = "spotless" }
+dependencyAnalysis = { id = "com.autonomousapps.dependency-analysis", version.ref = "dependencyAnalysis" }
+kover = { id = "org.jetbrains.kotlinx.kover", version.ref = "kover" }
+sortDependencies = { id = "com.squareup.sort-dependencies", version.ref = "sort" }
 kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
 intellij = { id = "org.jetbrains.intellij.platform", version = "2.2.1" }
 detekt = { id = "io.gitlab.arturbosch.detekt", version.ref = "detekt" }
 
 [libraries]
-detekt-formatting = { module = "io.gitlab.arturbosch.detekt:detekt-formatting", version.ref = "detekt" }
+# Only present to trigger automatic renovate updates
+ktfmt = { module = "com.facebook:ktfmt", version.ref = "ktfmt" }
 
 junit = { module = "junit:junit", version = "4.13.2" }
+testParameterInjector = { module = "com.google.testparameterinjector:test-parameter-injector", version = "1.18" }

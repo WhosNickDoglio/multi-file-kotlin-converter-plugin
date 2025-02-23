@@ -33,7 +33,6 @@ import com.pandora.plugin.writeCommitHistory
 
 /**
  * Custom action executing the following steps on each selected file(s):
- *
  * 0. Request user to enter list of files for conversion
  * 0. (Optional) Rename step in GIT
  * 0. (Optional) Simple file extension rename for GIT (`.java` to `.kt`)
@@ -42,23 +41,29 @@ import com.pandora.plugin.writeCommitHistory
  * 0. Use Native `ConvertJavaToKotlin` action to convert requested files.
  *
  * @see 'ConvertJavaToKotlin' official source code
- * https://github.com/JetBrains/kotlin/blob/master/idea/src/org/jetbrains/kotlin/idea/actions/JavaToKotlinAction.kt
+ *   https://github.com/JetBrains/kotlin/blob/master/idea/src/org/jetbrains/kotlin/idea/actions/JavaToKotlinAction.kt
  */
-class SearchAndConvertFilesToKotlinWithHistory : AnAction() {
+internal class SearchAndConvertFilesToKotlinWithHistory : AnAction() {
 
     // region Plugin implementation
 
-    @Suppress("ReturnCount")
+    @Suppress("ReturnCount", "Deprecation")
     override fun actionPerformed(e: AnActionEvent) {
         val project = e.project ?: return
         val projectBase = project.baseDir
 
         try {
             val dialogResult = FileSearchDialog.showSearchDialog(project, SearchDialog()) ?: return
-            val fileArray = verifyFiles(
-                project,
-                lineCountVerify(project, projectBase, dialogResult, regexVerify(projectBase, dialogResult.regex))
-            )
+            val fileArray =
+                verifyFiles(
+                    project,
+                    lineCountVerify(
+                        project,
+                        projectBase,
+                        dialogResult,
+                        regexVerify(projectBase, dialogResult.regex),
+                    ),
+                )
 
             fileArray.forEach { logger.info("Preparing to convert file: $it") }
 
@@ -71,17 +76,20 @@ class SearchAndConvertFilesToKotlinWithHistory : AnAction() {
                         return@writeCommitHistory
                     }
 
-                    val overrideEvent = AnActionEvent(
-                        e.inputEvent,
-                        e.dataContext(fileArray),
-                        e.place,
-                        e.presentation,
-                        e.actionManager,
-                        e.modifiers
-                    )
-                    ActionManager.getInstance().getAction(CONVERT_JAVA_TO_KOTLIN_PLUGIN_ID)
+                    @Suppress("Deprecation")
+                    val overrideEvent =
+                        AnActionEvent(
+                            e.inputEvent,
+                            e.dataContext(fileArray),
+                            e.place,
+                            e.presentation,
+                            e.actionManager,
+                            e.modifiers,
+                        )
+                    ActionManager.getInstance()
+                        .getAction(CONVERT_JAVA_TO_KOTLIN_PLUGIN_ID)
                         ?.actionPerformed(overrideEvent)
-                }
+                },
             )
         } catch (e: ConversionException) {
             if (e.isError) {
@@ -115,7 +123,7 @@ class SearchAndConvertFilesToKotlinWithHistory : AnAction() {
         project: Project,
         projectBase: VirtualFile,
         searchOptions: SearchOptions,
-        inputList: Array<VirtualFile>?
+        inputList: Array<VirtualFile>?,
     ): Array<VirtualFile>? {
         if (searchOptions.lineCount < 0) return inputList
         if (inputList == null) {
@@ -131,29 +139,31 @@ class SearchAndConvertFilesToKotlinWithHistory : AnAction() {
                     lambda,
                     "Scanning Files...",
                     false,
-                    project
+                    project,
                 )
         }
         val trimLambda = trim@{
-            return@trim inputList.filter {
-                val lines = LoadTextUtil.loadText(it).lines().count()
-                logger.info("Line count for $it: $lines")
-                searchOptions.countCompare(lines, searchOptions.lineCount)
-            }.toTypedArray()
+            return@trim inputList
+                .filter {
+                    val lines = LoadTextUtil.loadText(it).lines().count()
+                    logger.info("Line count for $it: $lines")
+                    searchOptions.countCompare(lines, searchOptions.lineCount)
+                }
+                .toTypedArray()
         }
         return ProgressManager.getInstance()
             .runProcessWithProgressSynchronously<Array<VirtualFile>?, Exception>(
                 trimLambda,
                 "Scanning Files...",
                 false,
-                project
+                project,
             )
     }
 
     private fun verifyFiles(
         project: Project,
         files: Array<VirtualFile>?,
-        formatter: (Any) -> String = { (it as VirtualFile).presentableName }
+        formatter: (Any) -> String = { (it as VirtualFile).presentableName },
     ): Array<VirtualFile> {
         if (files.isNullOrEmpty()) return emptyArray()
         return showMultiCheckboxDialog(files, project, "Verify Files", formatter)

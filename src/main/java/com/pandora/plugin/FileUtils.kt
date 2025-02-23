@@ -30,18 +30,16 @@ import com.intellij.psi.PsiJavaFile
 import com.intellij.psi.PsiManager
 import java.io.IOException
 
-val logger = Logger.getInstance("Kotlin Converter")
+internal val logger = Logger.getInstance("Kotlin Converter")
 
-/**
- * Official identifier of the native `ConvertJavaToKotlin` action.
- */
-const val CONVERT_JAVA_TO_KOTLIN_PLUGIN_ID = "ConvertJavaToKotlin"
+/** Official identifier of the native `ConvertJavaToKotlin` action. */
+internal const val CONVERT_JAVA_TO_KOTLIN_PLUGIN_ID = "ConvertJavaToKotlin"
 
-const val SUGGESTED_COMMIT_MESSAGE = "Converting files to Kotlin with safe renaming."
+internal const val SUGGESTED_COMMIT_MESSAGE = "Converting files to Kotlin with safe renaming."
 
-const val KOTLIN_EXTENSION = "kt"
+internal const val KOTLIN_EXTENSION = "kt"
 
-const val JAVA_EXTENSION = "java"
+internal const val JAVA_EXTENSION = "java"
 
 private var lastCommitMessage = SUGGESTED_COMMIT_MESSAGE
 
@@ -51,16 +49,17 @@ internal fun writeCommitHistory(
     project: Project,
     projectBase: VirtualFile,
     files: Array<VirtualFile>,
-    onFinish: (Boolean) -> Unit
+    onFinish: (Boolean) -> Unit,
 ): Boolean {
-    val commitMessage = Messages.showInputDialog(
-        project,
-        "Commit Message for Conversion:",
-        "Enter a commit message",
-        null,
-        lastCommitMessage,
-        null
-    )
+    val commitMessage =
+        Messages.showInputDialog(
+            project,
+            "Commit Message for Conversion:",
+            "Enter a commit message",
+            null,
+            lastCommitMessage,
+            null,
+        )
     if (commitMessage.isNullOrBlank()) {
         throw ConversionException("Commit Message cannot be empty")
     }
@@ -74,10 +73,16 @@ internal fun writeCommitHistory(
         files = files,
         onCommit = { successful ->
             if (!successful) {
-                Messages.showDialog("No files found to commit.", "Nothing to commit", emptyArray(), 0, null)
+                Messages.showDialog(
+                    "No files found to commit.",
+                    "Nothing to commit",
+                    emptyArray(),
+                    0,
+                    null,
+                )
             }
             onFinish(successful)
-        }
+        },
     )
 
     return false
@@ -90,11 +95,16 @@ internal fun renameFile(project: Project, virtualFile: VirtualFile, newName: Str
         try {
             virtualFile.rename(project, newName)
         } catch (e: IOException) {
-            throw ConversionException("Error while renaming file `${virtualFile.name}` to `$newName`", true, e)
+            throw ConversionException(
+                "Error while renaming file `${virtualFile.name}` to `$newName`",
+                true,
+                e,
+            )
         }
     }
 }
 
+@Suppress("DEPRECATION")
 internal fun VirtualFile.contentRevision(): CurrentContentRevision {
     val contextFactory = VcsContextFactory.SERVICE.getInstance()
     val path = contextFactory.createFilePathOn(this)
@@ -104,7 +114,9 @@ internal fun VirtualFile.contentRevision(): CurrentContentRevision {
 internal fun AnActionEvent.anyJavaFileSelected(): Boolean = runReadAction {
     val projectRef = project
     val files = getData(CommonDataKeys.VIRTUAL_FILE_ARRAY)
-    return@runReadAction projectRef != null && files != null && anyJavaFileSelected(projectRef, files)
+    return@runReadAction projectRef != null &&
+        files != null &&
+        anyJavaFileSelected(projectRef, files)
 }
 
 private fun anyJavaFileSelected(project: Project, files: Array<out VirtualFile>): Boolean {

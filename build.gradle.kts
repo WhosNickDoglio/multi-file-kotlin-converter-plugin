@@ -1,19 +1,34 @@
-import io.gitlab.arturbosch.detekt.Detekt
-import org.jetbrains.kotlin.gradle.dsl.JvmTarget
-
+/*
+ * Copyright 2019 Pandora Media, LLC
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * See accompanying LICENSE file or you may obtain a copy of the License at
+ *
+ *    http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 plugins {
+    alias(libs.plugins.convention.kotlin)
     alias(libs.plugins.kotlin.jvm)
     alias(libs.plugins.intellij)
     alias(libs.plugins.detekt)
+    alias(libs.plugins.lint)
+    alias(libs.plugins.spotless)
+    alias(libs.plugins.doctor)
+    alias(libs.plugins.dependencyAnalysis)
+    alias(libs.plugins.sortDependencies)
+    alias(libs.plugins.kover)
 }
 
 group = "com.pandora.plugin"
 
 version = "0.4.3"
-
-kotlin {
-    jvmToolchain(libs.versions.jdk.get().toInt())
-}
 
 intellijPlatform {
     pluginConfiguration {
@@ -33,26 +48,14 @@ intellijPlatform {
     instrumentCode.set(false)
 }
 
-java {
-    sourceCompatibility = JavaVersion.VERSION_11
-    targetCompatibility = JavaVersion.VERSION_11
-}
-
 detekt {
     autoCorrect = true
     source.setFrom(project.layout.projectDirectory.asFile)
 }
 
-tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile::class).configureEach {
-    compilerOptions.jvmTarget = JvmTarget.fromTarget(libs.versions.jdkTaret.get())
-}
-
-tasks.withType(Detekt::class.java).configureEach {
-    jvmTarget = libs.versions.jdkTaret.get()
-}
-
 repositories {
     mavenCentral()
+    google()
     intellijPlatform { defaultRepositories() }
 }
 
@@ -65,6 +68,6 @@ dependencies {
         zipSigner()
     }
 
-    detektPlugins(libs.detekt.formatting)
     testImplementation(libs.junit)
+    testImplementation(libs.testParameterInjector)
 }

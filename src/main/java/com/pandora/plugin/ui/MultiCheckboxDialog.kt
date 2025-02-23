@@ -21,19 +21,20 @@ import com.intellij.openapi.ui.VerticalFlowLayout
 import com.intellij.openapi.util.SystemInfo
 import com.intellij.ui.ScrollPaneFactory
 import com.pandora.plugin.DIALOG_SIZE
-import org.jetbrains.annotations.Nls
 import java.awt.Dimension
 import javax.swing.JCheckBox
 import javax.swing.JComponent
 import javax.swing.JPanel
 import javax.swing.JTextField
 import javax.swing.SwingConstants
+import org.jetbrains.annotations.Nls
 
-class MultiCheckboxDialog(
+@Suppress("Deprecation")
+internal class MultiCheckboxDialog(
     items: Array<out Any>,
     project: Project,
     @Nls(capitalization = Nls.Capitalization.Title) title: String,
-    private val itemFormatter: (Any) -> String
+    private val itemFormatter: (Any) -> String,
 ) : DialogWrapper(project) {
     private val checkBoxes = HashMap<Any, JCheckBox>()
 
@@ -51,11 +52,18 @@ class MultiCheckboxDialog(
     }
 
     override fun createCenterPanel(): JComponent? {
-        val messagePanel = JPanel(VerticalFlowLayout(VerticalFlowLayout.TOP or VerticalFlowLayout.LEFT, true, false))
+        val messagePanel =
+            JPanel(
+                VerticalFlowLayout(VerticalFlowLayout.TOP or VerticalFlowLayout.LEFT, true, false)
+            )
         messagePanel.maximumSize = Dimension(DIALOG_SIZE, DIALOG_SIZE)
 
         if (allItems.count() > MAX_FILES) {
-            messagePanel.add(JTextField("WARNING: Converting more than $MAX_FILES can cause unpredictable results"))
+            messagePanel.add(
+                JTextField(
+                    "WARNING: Converting more than $MAX_FILES can cause unpredictable results"
+                )
+            )
         }
 
         var i = 0
@@ -78,14 +86,15 @@ class MultiCheckboxDialog(
             items: Array<out Any>,
             project: Project,
             @Nls(capitalization = Nls.Capitalization.Title) title: String,
-            itemFormatter: (Any) -> String = { "$it" }
+            itemFormatter: (Any) -> String = { "$it" },
         ): List<Any> {
-            val dialog = MultiCheckboxDialog(
-                items,
-                project = project,
-                title = title,
-                itemFormatter = itemFormatter
-            )
+            val dialog =
+                MultiCheckboxDialog(
+                    items,
+                    project = project,
+                    title = title,
+                    itemFormatter = itemFormatter,
+                )
             dialog.show()
 
             return if (dialog.isOK) dialog.selectedItems else emptyList()

@@ -17,18 +17,18 @@ package com.pandora.plugin.ui
 
 import com.intellij.openapi.ui.InputValidator
 import com.intellij.openapi.ui.Messages
-import org.jetbrains.annotations.NonNls
 import java.awt.BorderLayout
 import javax.swing.Icon
 import javax.swing.JCheckBox
 import javax.swing.JPanel
 import javax.swing.JTextArea
+import org.jetbrains.annotations.NonNls
 
-class MultiFileFinderDialog(
+internal class MultiFileFinderDialog(
     searchDialog: SearchDialog,
     icon: Icon?,
     initialValue: String?,
-    validator: InputValidator? = null
+    validator: InputValidator? = null,
 ) : Messages.InputDialog(searchDialog.message, searchDialog.title, icon, initialValue, validator) {
     private lateinit var checkBox: JCheckBox
 
@@ -65,16 +65,20 @@ class MultiFileFinderDialog(
             searchDialog: SearchDialog,
             icon: Icon?,
             @NonNls initialValue: String,
-            validator: InputValidator?
+            validator: InputValidator?,
         ): Pair<String, Boolean> {
-            val dialog = MultiFileFinderDialog(
-                searchDialog = searchDialog,
-                icon = icon,
-                initialValue = initialValue,
-                validator = validator
-            )
+            val dialog =
+                MultiFileFinderDialog(
+                    searchDialog = searchDialog,
+                    icon = icon,
+                    initialValue = initialValue,
+                    validator = validator,
+                )
             dialog.show()
-            return Pair(if (dialog.isOK) dialog.inputString.orEmpty() else "", dialog.isChecked == true)
+            return Pair(
+                if (dialog.isOK) dialog.inputString.orEmpty() else "",
+                dialog.isChecked == true,
+            )
         }
     }
 }

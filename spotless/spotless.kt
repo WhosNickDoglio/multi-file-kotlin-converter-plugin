@@ -13,17 +13,3 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.pandora.plugin.options
-
-import java.awt.GridBagConstraints
-
-internal enum class PanelOption(val constraints: GridBagConstraints) {
-    WRAP(GridBagConstraints().apply { this.anchor = GridBagConstraints.LINE_START }),
-    FILL(
-        GridBagConstraints().apply {
-            this.anchor = GridBagConstraints.LINE_START
-            this.weightx = 1.0
-            this.fill = GridBagConstraints.HORIZONTAL
-        }
-    ),
-}

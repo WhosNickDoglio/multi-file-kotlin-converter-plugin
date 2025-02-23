@@ -33,7 +33,6 @@ import com.pandora.plugin.writeCommitHistory
 
 /**
  * Custom action executing the following steps on each selected file(s):
- *
  * 0. Request user to enter list of files for conversion
  * 0. (Optional) Rename step in GIT
  * 0. (Optional) Simple file extension rename for GIT (`.java` to `.kt`)
@@ -42,29 +41,30 @@ import com.pandora.plugin.writeCommitHistory
  * 0. Use Native `ConvertJavaToKotlin` action to convert requested files.
  *
  * @see Link to 'ConvertJavaToKotlin' official source code
- * https://github.com/JetBrains/kotlin/blob/master/idea/src/org/jetbrains/kotlin/idea/actions/JavaToKotlinAction.kt
+ *   https://github.com/JetBrains/kotlin/blob/master/idea/src/org/jetbrains/kotlin/idea/actions/JavaToKotlinAction.kt
  */
-class ConvertListOfFilesToKotlinWithHistory : AnAction() {
+internal class ConvertListOfFilesToKotlinWithHistory : AnAction() {
     // region Plugin implementation
 
     override fun getActionUpdateThread(): ActionUpdateThread = ActionUpdateThread.BGT
 
-    @Suppress("UseOrEmpty")
+    @Suppress("UseOrEmpty", "LongMethod", "Deprecation")
     override fun actionPerformed(e: AnActionEvent) {
         val project = e.project ?: return
         val projectBase = project.baseDir
 
         try {
-            val dialogResult = MultiFileFinderDialog.showInputDialogWithCheckBox(
-                SearchDialog(
-                    "Enter files to convert: (newline separated)",
-                    "Files to convert",
-                    "Automatically rename files in VCS"
-                ),
-                null,
-                "",
-                null
-            )
+            val dialogResult =
+                MultiFileFinderDialog.showInputDialogWithCheckBox(
+                    SearchDialog(
+                        "Enter files to convert: (newline separated)",
+                        "Files to convert",
+                        "Automatically rename files in VCS",
+                    ),
+                    null,
+                    "",
+                    null,
+                )
 
             val fileArray = fromFileList(projectBase, dialogResult.first) ?: emptyArray()
 
@@ -81,29 +81,32 @@ class ConvertListOfFilesToKotlinWithHistory : AnAction() {
                         return@writeCommitHistory
                     }
 
-                    val dataContext = SimpleDataContext.builder()
-                        .setParent(e.dataContext)
-                        .add(PlatformDataKeys.VIRTUAL_FILE_ARRAY, fileArray)
-                        .add(PlatformDataKeys.MODULE, modules)
-                        .build()
+                    val dataContext =
+                        SimpleDataContext.builder()
+                            .setParent(e.dataContext)
+                            .add(PlatformDataKeys.VIRTUAL_FILE_ARRAY, fileArray)
+                            .add(PlatformDataKeys.MODULE, modules)
+                            .build()
 
-                    val overrideEvent = AnActionEvent(
-                        dataContext,
-                        e.presentation,
-                        e.place,
-                        ActionUiKind.NONE,
-                        e.inputEvent,
-                        e.modifiers,
-                        e.actionManager,
-                    )
+                    val overrideEvent =
+                        AnActionEvent(
+                            dataContext,
+                            e.presentation,
+                            e.place,
+                            ActionUiKind.NONE,
+                            e.inputEvent,
+                            e.modifiers,
+                            e.actionManager,
+                        )
 
-                    val javaConverterAction = ActionManager.getInstance().getAction(CONVERT_JAVA_TO_KOTLIN_PLUGIN_ID)
+                    val javaConverterAction =
+                        ActionManager.getInstance().getAction(CONVERT_JAVA_TO_KOTLIN_PLUGIN_ID)
 
                     if (javaConverterAction == null) {
                         logger.info("NULL OOPS")
                     }
                     javaConverterAction?.actionPerformed(overrideEvent)
-                }
+                },
             )
         } catch (e: ConversionException) {
             if (e.isError) {

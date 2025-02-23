@@ -24,7 +24,6 @@ import com.intellij.openapi.util.SystemInfo
 import com.pandora.plugin.options.IntComparison
 import com.pandora.plugin.options.PanelOption
 import com.pandora.plugin.options.SearchOptions
-import org.jetbrains.annotations.Nls
 import java.awt.GridBagLayout
 import javax.swing.BorderFactory
 import javax.swing.JCheckBox
@@ -33,14 +32,16 @@ import javax.swing.JLabel
 import javax.swing.JPanel
 import javax.swing.JTextField
 import javax.swing.SwingConstants
+import org.jetbrains.annotations.Nls
 
-class FileSearchDialog(
+@Suppress("Deprecation")
+internal class FileSearchDialog(
     project: Project,
     private val message: String,
     @Nls(capitalization = Nls.Capitalization.Title) title: String,
     val checkboxText: String,
     val checked: Boolean,
-    val checkboxEnabled: Boolean
+    val checkboxEnabled: Boolean,
 ) : DialogWrapper(project) {
     private lateinit var commitCheckBox: JCheckBox
     private lateinit var regexCheckBox: JCheckBox
@@ -65,14 +66,16 @@ class FileSearchDialog(
         get() = if (regexCheckBox.isSelected) regexInput.text else null
 
     private val lineCount
-        get() = (if (lineCountCheckBox.isSelected) lineCountInput.selectedItem as Int? else null) ?: -1
+        get() =
+            (if (lineCountCheckBox.isSelected) lineCountInput.selectedItem as Int? else null) ?: -1
 
     private val lineCountFunction: (Int, Int) -> Boolean
-        get() = if (lineCountCheckBox.isSelected) {
-            (lineCountCombo.selectedItem as IntComparison).function
-        } else {
-            { _, _ -> true }
-        }
+        get() =
+            if (lineCountCheckBox.isSelected) {
+                (lineCountCombo.selectedItem as IntComparison).function
+            } else {
+                { _, _ -> true }
+            }
 
     @Suppress("MagicNumber") // Bottom padding is just a nudge
     private fun createTextComponent(str: String): JComponent {
@@ -83,7 +86,10 @@ class FileSearchDialog(
     }
 
     override fun createCenterPanel(): JComponent? {
-        val messagePanel = JPanel(VerticalFlowLayout(VerticalFlowLayout.TOP or VerticalFlowLayout.LEFT, true, false))
+        val messagePanel =
+            JPanel(
+                VerticalFlowLayout(VerticalFlowLayout.TOP or VerticalFlowLayout.LEFT, true, false)
+            )
 
         messagePanel.add(createTextComponent(message))
         val regexPanel = JPanel(GridBagLayout())
@@ -134,14 +140,15 @@ class FileSearchDialog(
         private var lastSizeType: IntComparison = IntComparison.LESS_THAN
 
         fun showSearchDialog(project: Project, searchDialog: SearchDialog): SearchOptions? {
-            val dialog = FileSearchDialog(
-                project = project,
-                message = searchDialog.message,
-                title = searchDialog.title,
-                checkboxText = searchDialog.checkboxText,
-                checked = searchDialog.checked,
-                checkboxEnabled = searchDialog.checkboxEnabled
-            )
+            val dialog =
+                FileSearchDialog(
+                    project = project,
+                    message = searchDialog.message,
+                    title = searchDialog.title,
+                    checkboxText = searchDialog.checkboxText,
+                    checked = searchDialog.checked,
+                    checkboxEnabled = searchDialog.checkboxEnabled,
+                )
             dialog.show()
             lastRegexUsed = dialog.regexCheckBox.isSelected
             lastRegex = dialog.regexInput.text
@@ -150,7 +157,12 @@ class FileSearchDialog(
             lastSizeType = dialog.lineCountCombo.selectedItem as IntComparison
 
             return if (dialog.isOK) {
-                SearchOptions(dialog.commit, dialog.regexText, dialog.lineCount, dialog.lineCountFunction)
+                SearchOptions(
+                    dialog.commit,
+                    dialog.regexText,
+                    dialog.lineCount,
+                    dialog.lineCountFunction,
+                )
             } else {
                 null
             }

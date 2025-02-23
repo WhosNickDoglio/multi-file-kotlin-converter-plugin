@@ -15,7 +15,10 @@
  */
 package com.pandora.plugin.options
 
-enum class IntComparison(private val prettyString: String, val function: (Int, Int) -> Boolean) {
+internal enum class IntComparison(
+    private val prettyString: String,
+    val function: (Int, Int) -> Boolean,
+) {
     LESS_THAN("<", { i, j -> i < j }),
     LESS_THAN_EQUAL("<=", { i, j -> i <= j }),
     EQUAL("==", { i, j -> i == j }),

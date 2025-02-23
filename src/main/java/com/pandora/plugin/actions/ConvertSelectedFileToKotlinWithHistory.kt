@@ -26,10 +26,11 @@ import com.pandora.plugin.anyJavaFileSelected
 import com.pandora.plugin.logger
 import com.pandora.plugin.writeCommitHistory
 
-class ConvertSelectedFileToKotlinWithHistory : AnAction() {
+internal class ConvertSelectedFileToKotlinWithHistory : AnAction() {
 
     override fun getActionUpdateThread(): ActionUpdateThread = ActionUpdateThread.BGT
 
+    @Suppress("Deprecation")
     override fun actionPerformed(e: AnActionEvent) {
         val project = e.project ?: return
         val projectBase = project.baseDir
@@ -48,17 +49,19 @@ class ConvertSelectedFileToKotlinWithHistory : AnAction() {
                         return@writeCommitHistory
                     }
 
-                    val overrideEvent = AnActionEvent(
-                        e.inputEvent,
-                        e.dataContext(fileArray),
-                        e.place,
-                        e.presentation,
-                        e.actionManager,
-                        e.modifiers
-                    )
-                    ActionManager.getInstance().getAction(CONVERT_JAVA_TO_KOTLIN_PLUGIN_ID)
+                    val overrideEvent =
+                        AnActionEvent(
+                            e.inputEvent,
+                            e.dataContext(fileArray),
+                            e.place,
+                            e.presentation,
+                            e.actionManager,
+                            e.modifiers,
+                        )
+                    ActionManager.getInstance()
+                        .getAction(CONVERT_JAVA_TO_KOTLIN_PLUGIN_ID)
                         ?.actionPerformed(overrideEvent)
-                }
+                },
             )
         } catch (e: ConversionException) {
             if (e.isError) {

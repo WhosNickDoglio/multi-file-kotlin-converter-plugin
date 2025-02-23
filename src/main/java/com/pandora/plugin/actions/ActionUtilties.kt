@@ -23,32 +23,36 @@ import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.openapi.vfs.VirtualFileVisitor
 import com.pandora.plugin.JAVA_EXTENSION
 
-/**
- * Provides an overridden [DataContext] using the provided [fileArray]
- */
-fun AnActionEvent.dataContext(fileArray: Array<VirtualFile>): DataContext = DataContext { data ->
-    when (data) {
-        PlatformDataKeys.VIRTUAL_FILE_ARRAY.name -> fileArray
-        else -> dataContext.getData(data)
+/** Provides an overridden [DataContext] using the provided [fileArray] */
+@Suppress("DEPRECATION")
+internal fun AnActionEvent.dataContext(fileArray: Array<VirtualFile>): DataContext =
+    DataContext { data ->
+        when (data) {
+            PlatformDataKeys.VIRTUAL_FILE_ARRAY.name -> fileArray
+            else -> dataContext.getData(data)
+        }
     }
-}
 
 /**
  * Searches the directory tree of a given [VirtualFile] for .java files that that can be converted
  */
-fun VirtualFile.findMatchingChildren(matcher: (VirtualFile) -> Boolean): Array<VirtualFile> = buildList {
-    VfsUtilCore.visitChildrenRecursively(
-        this@findMatchingChildren,
-        object : VirtualFileVisitor<Unit>() {
-            override fun visitFile(file: VirtualFile): Boolean {
-                if (file.canConvert && matcher(file)) {
-                    add(file)
-                }
-                return true
-            }
+internal fun VirtualFile.findMatchingChildren(
+    matcher: (VirtualFile) -> Boolean
+): Array<VirtualFile> =
+    buildList {
+            VfsUtilCore.visitChildrenRecursively(
+                this@findMatchingChildren,
+                object : VirtualFileVisitor<Unit>() {
+                    override fun visitFile(file: VirtualFile): Boolean {
+                        if (file.canConvert && matcher(file)) {
+                            add(file)
+                        }
+                        return true
+                    }
+                },
+            )
         }
-    )
-}.toTypedArray()
+        .toTypedArray()
 
 private val VirtualFile.canConvert: Boolean
     get() = extension == JAVA_EXTENSION && isWritable && !isDirectory && !path.contains("/build/")

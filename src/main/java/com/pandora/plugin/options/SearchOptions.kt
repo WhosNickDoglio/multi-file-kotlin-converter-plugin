@@ -15,9 +15,9 @@
  */
 package com.pandora.plugin.options
 
-data class SearchOptions(
+internal data class SearchOptions(
     val commit: Boolean = false,
     val regex: String? = null,
     val lineCount: Int = -1,
-    val countCompare: (Int, Int) -> Boolean = { first, second -> first <= second }
+    val countCompare: (Int, Int) -> Boolean = { first, second -> first <= second },
 )
