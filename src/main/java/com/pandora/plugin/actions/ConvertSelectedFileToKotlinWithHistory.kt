@@ -16,6 +16,7 @@
 package com.pandora.plugin.actions
 
 import com.intellij.openapi.actionSystem.ActionManager
+import com.intellij.openapi.actionSystem.ActionUiKind
 import com.intellij.openapi.actionSystem.ActionUpdateThread
 import com.intellij.openapi.actionSystem.AnAction
 import com.intellij.openapi.actionSystem.AnActionEvent
@@ -51,12 +52,13 @@ internal class ConvertSelectedFileToKotlinWithHistory : AnAction() {
 
                     val overrideEvent =
                         AnActionEvent(
-                            e.inputEvent,
                             e.dataContext(fileArray),
-                            e.place,
                             e.presentation,
-                            e.actionManager,
+                            e.place,
+                            ActionUiKind.NONE,
+                            e.inputEvent,
                             e.modifiers,
+                            e.actionManager,
                         )
                     ActionManager.getInstance()
                         .getAction(CONVERT_JAVA_TO_KOTLIN_PLUGIN_ID)

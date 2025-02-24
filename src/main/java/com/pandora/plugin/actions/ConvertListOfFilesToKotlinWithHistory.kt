@@ -23,6 +23,7 @@ import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.actionSystem.PlatformDataKeys
 import com.intellij.openapi.actionSystem.impl.SimpleDataContext
 import com.intellij.openapi.module.ModuleManager
+import com.intellij.openapi.project.guessProjectDir
 import com.intellij.openapi.vfs.VirtualFile
 import com.pandora.plugin.CONVERT_JAVA_TO_KOTLIN_PLUGIN_ID
 import com.pandora.plugin.ConversionException
@@ -48,10 +49,10 @@ internal class ConvertListOfFilesToKotlinWithHistory : AnAction() {
 
     override fun getActionUpdateThread(): ActionUpdateThread = ActionUpdateThread.BGT
 
-    @Suppress("UseOrEmpty", "LongMethod", "Deprecation")
+    @Suppress("UseOrEmpty", "LongMethod")
     override fun actionPerformed(e: AnActionEvent) {
         val project = e.project ?: return
-        val projectBase = project.baseDir
+        val projectBase = project.guessProjectDir() ?: return
 
         try {
             val dialogResult =
@@ -69,9 +70,8 @@ internal class ConvertListOfFilesToKotlinWithHistory : AnAction() {
             val fileArray = fromFileList(projectBase, dialogResult.first) ?: emptyArray()
 
             fileArray.forEach { logger.info("Preparing to convert file: $it") }
+            // TODO need to figure out how this works if list contains files from multiple modules
             val modules = ModuleManager.getInstance(project).modules.first()
-
-            fileArray.first()
             writeCommitHistory(
                 project = project,
                 projectBase = projectBase,
@@ -101,10 +101,6 @@ internal class ConvertListOfFilesToKotlinWithHistory : AnAction() {
 
                     val javaConverterAction =
                         ActionManager.getInstance().getAction(CONVERT_JAVA_TO_KOTLIN_PLUGIN_ID)
-
-                    if (javaConverterAction == null) {
-                        logger.info("NULL OOPS")
-                    }
                     javaConverterAction?.actionPerformed(overrideEvent)
                 },
             )

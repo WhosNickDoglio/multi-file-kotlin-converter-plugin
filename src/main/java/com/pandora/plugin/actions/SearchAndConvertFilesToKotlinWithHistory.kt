@@ -16,11 +16,14 @@
 package com.pandora.plugin.actions
 
 import com.intellij.openapi.actionSystem.ActionManager
+import com.intellij.openapi.actionSystem.ActionUiKind
+import com.intellij.openapi.actionSystem.ActionUpdateThread
 import com.intellij.openapi.actionSystem.AnAction
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.fileEditor.impl.LoadTextUtil
 import com.intellij.openapi.progress.ProgressManager
 import com.intellij.openapi.project.Project
+import com.intellij.openapi.project.guessProjectDir
 import com.intellij.openapi.vfs.VirtualFile
 import com.pandora.plugin.CONVERT_JAVA_TO_KOTLIN_PLUGIN_ID
 import com.pandora.plugin.ConversionException
@@ -46,11 +49,12 @@ import com.pandora.plugin.writeCommitHistory
 internal class SearchAndConvertFilesToKotlinWithHistory : AnAction() {
 
     // region Plugin implementation
+    override fun getActionUpdateThread(): ActionUpdateThread = ActionUpdateThread.BGT
 
-    @Suppress("ReturnCount", "Deprecation")
+    @Suppress("ReturnCount")
     override fun actionPerformed(e: AnActionEvent) {
         val project = e.project ?: return
-        val projectBase = project.baseDir
+        val projectBase = project.guessProjectDir() ?: return
 
         try {
             val dialogResult = FileSearchDialog.showSearchDialog(project, SearchDialog()) ?: return
@@ -76,15 +80,15 @@ internal class SearchAndConvertFilesToKotlinWithHistory : AnAction() {
                         return@writeCommitHistory
                     }
 
-                    @Suppress("Deprecation")
                     val overrideEvent =
                         AnActionEvent(
-                            e.inputEvent,
                             e.dataContext(fileArray),
-                            e.place,
                             e.presentation,
-                            e.actionManager,
+                            e.place,
+                            ActionUiKind.NONE,
+                            e.inputEvent,
                             e.modifiers,
+                            e.actionManager,
                         )
                     ActionManager.getInstance()
                         .getAction(CONVERT_JAVA_TO_KOTLIN_PLUGIN_ID)
