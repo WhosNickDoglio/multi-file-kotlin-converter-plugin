@@ -1,6 +1,7 @@
 # Introduction
 
 [![CI](https://github.com/WhosNickDoglio/multi-file-kotlin-converter-plugin/actions/workflows/ci.yml/badge.svg)](https://github.com/WhosNickDoglio/multi-file-kotlin-converter-plugin/actions/workflows/ci.yml)
+[![License](https://img.shields.io/badge/License-Apache_2.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
 
 The __Multiple File Kotlin Converter__ IntelliJ IDEA plugin runs the native *Convert Java File To Kotlin File* action against a list of files,
 in sequence allowing bulk conversion. It includes several options for selecting files, including:
