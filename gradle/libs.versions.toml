@@ -1,6 +1,6 @@
 [versions]
 agp = "8.9.0"
-dependencyAnalysis = "2.13.0"
+dependencyAnalysis = "2.19.0"
 ktfmt = "0.54"
 kover = "0.9.1"
 spotless = "7.0.2"
