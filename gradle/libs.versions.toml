@@ -20,7 +20,7 @@ dependencyAnalysis = { id = "com.autonomousapps.dependency-analysis", version.re
 kover = { id = "org.jetbrains.kotlinx.kover", version.ref = "kover" }
 sortDependencies = { id = "com.squareup.sort-dependencies", version.ref = "sort" }
 kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
-intellij = { id = "org.jetbrains.intellij.platform", version = "2.2.1" }
+intellij = { id = "org.jetbrains.intellij.platform", version = "2.18.1" }
 detekt = { id = "io.gitlab.arturbosch.detekt", version.ref = "detekt" }
 
 [libraries]
